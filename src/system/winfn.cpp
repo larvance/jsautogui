@@ -1,4 +1,3 @@
-#include <node_api.h>
 #include <Windows.h>
 #include <iostream>
 #include <thread>
@@ -8,10 +7,10 @@
 #define IDD_CUSTOM_DIALOG 101
 #define IDC_EDIT 102
 
-#define INPUT_SEND(input)                             \
-    if (SendInput(1, &(input), sizeof(INPUT)) != 1)   \
-    {                                                 \
-        return false;                                 \
+#define INPUT_SEND(input)                           \
+    if (SendInput(1, &(input), sizeof(INPUT)) != 1) \
+    {                                               \
+        return false;                               \
     }
 
 LPCWSTR to_lpcwstr(char *text)
@@ -37,8 +36,7 @@ LPWSTR to_lpwstr(char *buffer)
 
 Point f_get_screen_size()
 {
-    Point p(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
-    return p;
+    return Point(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
 }
 
 Point f_get_cursor_position()
@@ -46,11 +44,9 @@ Point f_get_cursor_position()
     POINT point;
     if (!GetCursorPos(&point))
     {
-        Point p(-1, -1);
-        return p;
+        return Point(-1, -1);
     }
-    Point p(point.x, point.y);
-    return p;
+    return Point(point.x, point.y);
 }
 
 bool f_set_cursor_position(int x, int y)
@@ -188,14 +184,9 @@ bool f_mouse_scroll(int x, int y)
 
 bool f_press_key(bool is_ascii, int got)
 {
-    if (is_ascii)
-    {
-        got = VkKeyScanA(static_cast<CHAR>(got));
-    }
-
     INPUT input;
     input.type = INPUT_KEYBOARD;
-    input.ki.wVk = got;
+    input.ki.wVk = is_ascii ? VkKeyScanA(static_cast<CHAR>(got)) : got;
     input.ki.dwFlags = 0;
     INPUT_SEND(input);
 
@@ -206,14 +197,9 @@ bool f_press_key(bool is_ascii, int got)
 
 bool f_key_down(bool is_ascii, int got)
 {
-    if (is_ascii)
-    {
-        got = VkKeyScanA(static_cast<CHAR>(got));
-    }
-
     INPUT input;
     input.type = INPUT_KEYBOARD;
-    input.ki.wVk = got;
+    input.ki.wVk = is_ascii ? VkKeyScanA(static_cast<CHAR>(got)) : got;
     input.ki.dwFlags = 0;
     INPUT_SEND(input);
     return true;
@@ -221,14 +207,9 @@ bool f_key_down(bool is_ascii, int got)
 
 bool f_key_up(bool is_ascii, int got)
 {
-    if (is_ascii)
-    {
-        got = VkKeyScanA(static_cast<CHAR>(got));
-    }
-
     INPUT input;
     input.type = INPUT_KEYBOARD;
-    input.ki.wVk = got;
+    input.ki.wVk = is_ascii ? VkKeyScanA(static_cast<CHAR>(got)) : got;
     input.ki.dwFlags = KEYEVENTF_KEYUP;
     INPUT_SEND(input);
     return true;
